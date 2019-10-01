@@ -7,10 +7,29 @@ resources:
       private_key: ((git_key))
 
 jobs: 
-  - name: discover-tables
-    public: true
+  - name: ingestion
     plan:
       - get: table_names
+      - task: ingest
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: docker-registry.collibra.com/catalog-edge/ingestion
+              tag: "0.0.1"
+              username: jenkins
+              password: ((jenkins_pw))
+              insecure_registries: [ "docker-registry.collibra.com" ]
+          outputs:
+            - name: ingestion
+          run:
+            path: bash
+            args:
+            - -c
+            - |
+              java -jar /opt/collibra/ingestion.jar
+              cp /root/edge_poc/ingestion/result.json ingestion/result.json
       - task: write-tables
         config:
           platform: linux
@@ -24,7 +43,7 @@ jobs:
               - |
                 #!/bin/bash
                 git clone ./table_names ./table_new
-                echo -e "TABLE1\nTABLE2\nTABLE3\nTABLE4" > ./table_new/table_names.csv
+                cp ingestion/result.json ./table_new/
                 cd table_new
                 echo $(date) > last_run
                 git config user.name ci
@@ -35,10 +54,12 @@ jobs:
             - name: table_new
           inputs:
             - name: table_names
+            - name: ingestion
       - put: table_names
         params:
           repository: table_new
           force: true
+
   - name: profile
     plan:
       - get: table_names
@@ -48,7 +69,7 @@ jobs:
           image_resource:
             type: docker-image
             source:
-              repository: docker-registry.collibra.com/catalog-edge/ingestion
+              repository: docker-registry.collibra.com/catalog-edge/profile
               tag: "0.0.1"
               username: jenkins
               password: ((jenkins_pw))
@@ -59,6 +80,7 @@ jobs:
             - -c
             - |
               ls -la
+
 resource_types:
 - name: docker-image-resource
   type: docker-image
