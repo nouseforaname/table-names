@@ -1,0 +1,68 @@
+resources:
+  - name: table_names
+    type: git
+    source:
+      uri: git@github.com:nouseforaname/table-names
+      branch: master
+      private_key: ((git_key))
+
+jobs: 
+  - name: discover-tables
+    public: true
+    plan:
+      - get: table_names
+      - task: write-tables
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: { repository: ellerbrock/alpine-bash-git }
+          run:
+            path: bash
+            args:
+              - -c
+              - |
+                #!/bin/bash
+                git clone ./table_names ./table_new
+                echo -e "TABLE1\nTABLE2\nTABLE3\nTABLE4" > ./table_new/table_names.csv
+                cd table_new
+                echo $(date) > last_run
+                git config user.name ci
+                git config user.email ci@collibra.com
+                git add .
+                git commit -m 'NEW  '
+          outputs:
+            - name: table_new
+          inputs:
+            - name: table_names
+      - put: table_names
+        params:
+          repository: table_new
+          force: true
+  - name: profile
+    plan:
+      - get: table_names
+      - task: profile
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: docker-registry.collibra.com/catalog-edge/ingestion
+              tag: "0.0.1"
+              username: jenkins
+              password: ((jenkins_pw))
+              insecure_registries: [ "docker-registry.collibra.com" ]
+          run: 
+            path: sh
+            args:
+            - -c
+            - |
+              ls -la
+resource_types:
+- name: docker-image-resource
+  type: docker-image
+  source:
+    repository: concourse/registry-image-resource
+    tag: latest
+    
