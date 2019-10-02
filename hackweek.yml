@@ -50,28 +50,30 @@ jobs:
               - -c
               - |
                 #!/bin/bash
-                echo 'parallel_tasks:' > tasks/tasks.yml
+                echo 'parallel_tasks:
+                        limit: 5
+                        steps:' > tasks/tasks.yml
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
                   echo "
-                  - task: profile $f
-                    config:
-                      platform: linux
-                      image_resource:
-                        type: docker-image
-                        source:
-                          repository: docker-registry.collibra.com/catalog-edge/profiling
-                          tag: \"0.0.1\"
-                          username: jenkins
-                          password: ((jenkins_pw))
-                          insecure_registries: [ \"docker-registry.collibra.com\" ]
-                      run: 
-                        path: bash
-                        args:
-                        - -c
-                        - |
-                          TABLE_NAME=$f
-                          CONN_STRING=((conn_string)) 
-                  " >> tasks/tasks.yml
+                    - task: profile $f
+                      config:
+                        platform: linux
+                        image_resource:
+                          type: docker-image
+                          source:
+                            repository: docker-registry.collibra.com/catalog-edge/profiling
+                            tag: \"0.0.1\"
+                            username: jenkins
+                            password: ((jenkins_pw))
+                            insecure_registries: [ \"docker-registry.collibra.com\" ]
+                        run: 
+                          path: bash
+                          args:
+                          - -c
+                          - |
+                            TABLE_NAME=$f
+                            CONN_STRING=((conn_string)) 
+                    " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
           outputs:
