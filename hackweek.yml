@@ -80,7 +80,7 @@ jobs:
                       args:
                       - -cp 
                       - mnt/vol/*:/app/profiling-0.0.5.jar
-                      - -Xmx2G,
+                      - -Xmx2G
                       - com.collibra.catalog.edge.ingestion.IngestionPoc
                 " >> tasks/tasks.yml
                 done
