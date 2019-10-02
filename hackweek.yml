@@ -5,7 +5,15 @@ resources:
       uri: git@github.com:nouseforaname/table-names
       branch: master
       private_key: ((git_key))
-
+  - name: pipelines
+    type: concourse-pipeline
+    source:
+      target: ((concourse_url))
+      insecure: "true"
+      teams:
+      - name: main
+        username:  ((concourse_username))
+        password: ((concourse_password))
 jobs: 
   - name: ingestion
     plan:
@@ -30,7 +38,7 @@ jobs:
             - |
               java -jar /opt/collibra/ingestion.jar
               cp /root/edge_poc/ingestion/result.json ingestion/result.json
-      - task: write-tables
+      - task: write-tasks
         config:
           platform: linux
           image_resource:
@@ -42,44 +50,49 @@ jobs:
               - -c
               - |
                 #!/bin/bash
-                git clone ./table_names ./table_new
-                cp ingestion/result.json ./table_new/
-                cd table_new
-                echo $(date) > last_run
-                git config user.name ci
-                git config user.email ci@collibra.com
-                git add .
-                git commit -m 'NEW  '
+                echo 'in_parallel:' > tasks/tasks.yml
+                IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
+                  echo '
+                  - task: profile
+                    config:
+                      platform: linux
+                      image_resource:
+                        type: docker-image
+                        source:
+                          repository: docker-registry.collibra.com/catalog-edge/profiling
+                          tag: "0.0.1"
+                          username: jenkins
+                          password: ((jenkins_pw))
+                          insecure_registries: [ "docker-registry.collibra.com" ]
+                      run: 
+                        path: bash
+                        args:
+                        - -c
+                        - |
+                          echo $table
+                  ' >> tasks/tasks.yml
+                done
+                   
           outputs:
-            - name: table_new
+            - name: tasks
           inputs:
             - name: table_names
             - name: ingestion
-      - put: table_names
+      - put: pipelines
         params:
-          repository: table_new
-          force: true
+          pipelines:
+          - name: hackweek
+            team: main
+            config_file: table_names/hackweek.yml
+            vars_files:
+            - tasks/tasks.yml
 
   - name: profile
-    plan:
-      - get: table_names
-      - task: profile
-        config:
-          platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: docker-registry.collibra.com/catalog-edge/profile
-              tag: "0.0.1"
-              username: jenkins
-              password: ((jenkins_pw))
-              insecure_registries: [ "docker-registry.collibra.com" ]
-          run: 
-            path: sh
-            args:
-            - -c
-            - |
-              ls -la
+    plan: 
+      - get: pipelines
+      - in_parallel: ((parallel_tasks))
+
+
 
 resource_types:
 - name: docker-image-resource
@@ -87,4 +100,7 @@ resource_types:
   source:
     repository: concourse/registry-image-resource
     tag: latest
-    
+- name: concourse-pipeline
+  type: docker-image
+  source:
+    repository: concourse/concourse-pipeline-resource    
