@@ -69,7 +69,7 @@ jobs:
                           type: docker-image
                           source:
                             repository: docker-registry.collibra.com/catalog-edge/profiling
-                            tag: \"0.0.3\"
+                            tag: \"0.0.5\"
                             username: jenkins
                             password: ((jenkins_pw))
                             insecure_registries: [ \"docker-registry.collibra.com\" ]
@@ -80,7 +80,7 @@ jobs:
                           - /app
                           - -Xmx2G
                           - -jar 
-                          - /app/profiling-0.0.3.jar
+                          - /app/profiling-0.0.5.jar
                     " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
