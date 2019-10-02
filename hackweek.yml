@@ -65,7 +65,7 @@ jobs:
                             password: ((jenkins_pw))
                             insecure_registries: [ \"docker-registry.collibra.com\" ]
                         run: 
-                          path: bash
+                          path: sh
                           args:
                           - -c
                           - |
