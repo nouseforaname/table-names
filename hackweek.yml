@@ -59,6 +59,11 @@ jobs:
                         params:
                           TABLE_NAME: $f
                           CONN_STRING: ((conn_string))
+                          PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+                          LANG: en_US.UTF-8
+                          LANGUAGE: en_US:en
+                          LC_ALL: en_US.UTF-8
+                          JAVA_HOME: /usr/lib/jvm/zulu-8
                         image_resource:
                           type: docker-image
                           source:
