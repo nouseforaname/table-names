@@ -50,7 +50,7 @@ jobs:
               - -c
               - |
                 #!/bin/bash
-                echo -e 'parallel_tasks:\n  limit: 2\n  steps:' > tasks/tasks.yml
+                echo -e 'parallel_tasks:\n  limit: ((concurrent_limit))\n  steps:' > tasks/tasks.yml
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
                   echo "
                     - task: profile $f
