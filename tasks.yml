@@ -1,0 +1,13 @@
+parallel_tasks:
+- task: write-tables
+  config:
+    platform: linux
+    image_resource:
+      type: registry-image
+      source: { repository: ellerbrock/alpine-bash-git }
+    run:
+      path: bash
+      args:
+        - -c
+        - |
+          echo done
