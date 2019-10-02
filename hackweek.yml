@@ -80,7 +80,7 @@ jobs:
                       args:
                       - -c
                       - | 
-                        /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.ingestion.IngestionPoc\"
+                        /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.profiling.ProfilingPoc\"
                 " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
