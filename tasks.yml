@@ -3,7 +3,7 @@ steps:
   config:
     platform: linux
     outputs:
-    - name: driver
+    - name: mnt
     image_resource:
       type: registry-image
       source: { repository: ellerbrock/alpine-bash-git }
@@ -12,4 +12,5 @@ steps:
       args:
         - -c
         - |
-          wget -O driver/driver.jar https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.2.0.jre8/mssql-jdbc-7.2.0.jre8.jar
+          mkdir -p mnt/vol
+          wget -O mnt/vol/driver.jar https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.2.0.jre8/mssql-jdbc-7.2.0.jre8.jar
