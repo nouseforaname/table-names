@@ -32,7 +32,7 @@ jobs:
           outputs:
             - name: ingestion
           run:
-            path: bauh
+            path: bash
             args:
             - -c
             - |
@@ -76,12 +76,11 @@ jobs:
                         password: ((jenkins_pw))
                         insecure_registries: [ \"docker-registry.collibra.com\" ]
                     run: 
-                      path: /usr/lib/jvm/zulu-8/bin/java
+                      path: /bin/sh
                       args:
-                      - -cp 
-                      - mnt/vol/*:/app/*
-                      - -Xmx2G
-                      - \"com.collibra.catalog.edge.ingestion.IngestionPoc\"
+                      - -c
+                      - | 
+                        /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.ingestion.IngestionPoc\"
                 " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
