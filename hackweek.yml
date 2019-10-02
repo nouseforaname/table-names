@@ -69,7 +69,7 @@ jobs:
                         args:
                         - -c
                         - |
-                          echo $table
+                          echo $f
                   " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
