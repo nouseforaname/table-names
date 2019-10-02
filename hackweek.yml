@@ -69,8 +69,9 @@ jobs:
                           args:
                           - -c
                           - |
-                            TABLE_NAME=$f
-                            CONN_STRING=((conn_string)) 
+                            export TABLE_NAME=$f
+                            export CONN_STRING=((conn_string)) 
+                            java -jar /opt/collibra/profiling.jar
                     " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
