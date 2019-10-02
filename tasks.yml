@@ -1,7 +1,9 @@
 steps:
-- task: write-tables
+- task: get_driver
   config:
     platform: linux
+    outputs:
+    - driver
     image_resource:
       type: registry-image
       source: { repository: ellerbrock/alpine-bash-git }
@@ -10,4 +12,4 @@ steps:
       args:
         - -c
         - |
-          echo done
+          wget -O driver/driver.jar https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.2.0.jre8/mssql-jdbc-7.2.0.jre8.jar

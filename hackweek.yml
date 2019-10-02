@@ -77,7 +77,7 @@ jobs:
                       path: /usr/lib/jvm/zulu-8/bin/java
                       args:
                       - -cp 
-                      - /app
+                      - driver
                       - -Xmx2G
                       - -jar 
                       - /app/profiling-0.0.5.jar
@@ -89,6 +89,7 @@ jobs:
           inputs:
             - name: table_names
             - name: ingestion
+            - name: driver
       - put: pipelines
         params:
           pipelines:
