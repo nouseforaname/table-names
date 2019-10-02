@@ -50,7 +50,7 @@ jobs:
               - -c
               - |
                 #!/bin/bash
-                echo 'in_parallel:' > tasks/tasks.yml
+                echo 'parallel_tasks:' > tasks/tasks.yml
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
                   echo '
                   - task: profile
@@ -72,7 +72,7 @@ jobs:
                           echo $table
                   ' >> tasks/tasks.yml
                 done
-                   
+                cat tasks/tasks.yml
           outputs:
             - name: tasks
           inputs:
