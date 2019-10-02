@@ -91,7 +91,6 @@ jobs:
           inputs:
             - name: table_names
             - name: ingestion
-            - name: driver
       - put: pipelines
         params:
           pipelines:
