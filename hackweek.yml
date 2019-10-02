@@ -92,6 +92,7 @@ jobs:
   - name: profile
     plan: 
       - get: pipelines
+        passed: [ingestion]
       - in_parallel: ((parallel_tasks))
 
 
