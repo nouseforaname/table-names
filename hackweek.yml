@@ -73,7 +73,7 @@ jobs:
                             password: ((jenkins_pw))
                             insecure_registries: [ \"docker-registry.collibra.com\" ]
                         run: 
-                          path: java
+                          path: /usr/lib/jvm/zulu-8/bin/java
                           args:
                           - -Xmx2G
                           - -jar 
