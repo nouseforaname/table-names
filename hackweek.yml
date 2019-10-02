@@ -57,6 +57,7 @@ jobs:
                       config:
                         platform: linux
                         params:
+                          DRIVER_CLASS_NAME: ((driver_class_name))
                           TABLE_NAME: $f
                           CONN_STRING: ((conn_string))
                           PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
