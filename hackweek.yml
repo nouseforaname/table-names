@@ -100,7 +100,9 @@ jobs:
     plan: 
       - get: pipelines
         passed: [ingestion]
-      - in_parallel: ((parallel_tasks))
+      - in_parallel: 
+          limit: 1
+          steps: ((steps))
 resource_types:
 - name: docker-image-resource
   type: docker-image
