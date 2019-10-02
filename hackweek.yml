@@ -68,16 +68,17 @@ jobs:
                           type: docker-image
                           source:
                             repository: docker-registry.collibra.com/catalog-edge/profiling
-                            tag: \"0.0.2\"
+                            tag: \"0.0.3\"
                             username: jenkins
                             password: ((jenkins_pw))
                             insecure_registries: [ \"docker-registry.collibra.com\" ]
                         run: 
                           path: /usr/lib/jvm/zulu-8/bin/java
                           args:
+                          - -cp /app
                           - -Xmx2G
                           - -jar 
-                          - /app/profiling-0.0.2.jar
+                          - /app/profiling-0.0.3.jar
                     " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
