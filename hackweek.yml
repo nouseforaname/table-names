@@ -65,6 +65,8 @@ jobs:
                       LANGUAGE: en_US:en
                       LC_ALL: en_US.UTF-8
                       JAVA_HOME: /usr/lib/jvm/zulu-8
+                    inputs:
+                      - name: driver
                     image_resource:
                       type: docker-image
                       source:
