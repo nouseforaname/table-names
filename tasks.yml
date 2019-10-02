@@ -3,7 +3,7 @@ steps:
   config:
     platform: linux
     outputs:
-    - driver
+    - name: driver
     image_resource:
       type: registry-image
       source: { repository: ellerbrock/alpine-bash-git }
