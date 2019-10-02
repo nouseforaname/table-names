@@ -52,35 +52,35 @@ jobs:
                 #!/bin/bash
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
                   echo "
-                    - task: profile $f
-                      config:
-                        platform: linux
-                        params:
-                          DRIVER_CLASS_NAME: ((driver_class_name))
-                          TABLE_NAME: $f
-                          CONN_STRING: ((conn_string))
-                          PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-                          LANG: en_US.UTF-8
-                          LANGUAGE: en_US:en
-                          LC_ALL: en_US.UTF-8
-                          JAVA_HOME: /usr/lib/jvm/zulu-8
-                        image_resource:
-                          type: docker-image
-                          source:
-                            repository: docker-registry.collibra.com/catalog-edge/profiling
-                            tag: \"0.0.5\"
-                            username: jenkins
-                            password: ((jenkins_pw))
-                            insecure_registries: [ \"docker-registry.collibra.com\" ]
-                        run: 
-                          path: /usr/lib/jvm/zulu-8/bin/java
-                          args:
-                          - -cp 
-                          - /app
-                          - -Xmx2G
-                          - -jar 
-                          - /app/profiling-0.0.5.jar
-                    " >> tasks/tasks.yml
+                  - task: profile $f
+                    config:
+                      platform: linux
+                      params:
+                        DRIVER_CLASS_NAME: ((driver_class_name))
+                        TABLE_NAME: $f
+                        CONN_STRING: ((conn_string))
+                        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+                        LANG: en_US.UTF-8
+                        LANGUAGE: en_US:en
+                        LC_ALL: en_US.UTF-8
+                        JAVA_HOME: /usr/lib/jvm/zulu-8
+                      image_resource:
+                        type: docker-image
+                        source:
+                          repository: docker-registry.collibra.com/catalog-edge/profiling
+                          tag: \"0.0.5\"
+                          username: jenkins
+                          password: ((jenkins_pw))
+                          insecure_registries: [ \"docker-registry.collibra.com\" ]
+                      run: 
+                        path: /usr/lib/jvm/zulu-8/bin/java
+                        args:
+                        - -cp 
+                        - /app
+                        - -Xmx2G
+                        - -jar 
+                        - /app/profiling-0.0.5.jar
+                  " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
           outputs:
@@ -101,7 +101,7 @@ jobs:
       - get: pipelines
         passed: [ingestion]
       - in_parallel: 
-          limit: 1
+          limit: 1 #((concurrent_limit.limit))
           steps: ((steps))
 resource_types:
 - name: docker-image-resource
