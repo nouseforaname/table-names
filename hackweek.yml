@@ -32,7 +32,7 @@ jobs:
           outputs:
             - name: ingestion
           run:
-            path: bash
+            path: bauh
             args:
             - -c
             - |
@@ -79,7 +79,7 @@ jobs:
                       path: /usr/lib/jvm/zulu-8/bin/java
                       args:
                       - -cp 
-                      - mnt/vol/*:/app/*.jar
+                      - mnt/vol/*:/app/*
                       - -Xmx2G
                       - \"com.collibra.catalog.edge.ingestion.IngestionPoc\"
                 " >> tasks/tasks.yml
