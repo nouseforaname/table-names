@@ -81,7 +81,7 @@ jobs:
                       - -cp 
                       - mnt/vol/*:/app/*.jar
                       - -Xmx2G
-                      - com.collibra.catalog.edge.ingestion.IngestionPoc
+                      - \"com.collibra.catalog.edge.ingestion.IngestionPoc\"
                 " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
