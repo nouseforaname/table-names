@@ -79,7 +79,7 @@ jobs:
                       path: /usr/lib/jvm/zulu-8/bin/java
                       args:
                       - -cp 
-                      - mnt/vol/*:/app/profiling-0.0.5.jar
+                      - mnt/vol/*:/app/*.jar
                       - -Xmx2G
                       - com.collibra.catalog.edge.ingestion.IngestionPoc
                 " >> tasks/tasks.yml
