@@ -76,7 +76,7 @@ jobs:
                         run: 
                           path: /usr/lib/jvm/zulu-8/bin/java
                           args:
-                          - -cp /app
+                          - --help #-cp /app
                           - -Xmx2G
                           - -jar 
                           - /app/profiling-0.0.3.jar
