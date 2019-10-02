@@ -50,6 +50,7 @@ jobs:
               - -c
               - |
                 #!/bin/bash
+                cp table_names/tasks.yml tasks/tasks.yml
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
                   echo "
                   - task: profile $f
