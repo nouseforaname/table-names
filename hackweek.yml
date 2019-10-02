@@ -69,7 +69,8 @@ jobs:
                         args:
                         - -c
                         - |
-                          echo $f
+                          TABLE_NAME=$f
+                          CONN_STRING=((conn_string)) 
                   " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
