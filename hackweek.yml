@@ -56,6 +56,9 @@ jobs:
                     - task: profile $f
                       config:
                         platform: linux
+                        params:
+                          TABLE_NAME=$f
+                          CONN_STRING=((conn_string))
                         image_resource:
                           type: docker-image
                           source:
@@ -65,13 +68,11 @@ jobs:
                             password: ((jenkins_pw))
                             insecure_registries: [ \"docker-registry.collibra.com\" ]
                         run: 
-                          path: sh
+                          path: java
                           args:
-                          - -c
-                          - |
-                            export TABLE_NAME=$f
-                            export CONN_STRING=((conn_string)) 
-                            java -Xmx2G -jar /app/profiling-0.0.2.jar
+                          - -Xmx2G
+                          - -jar 
+                          - /app/profiling-0.0.2.jar
                     " >> tasks/tasks.yml
                 done
                 cat tasks/tasks.yml
