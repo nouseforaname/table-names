@@ -91,7 +91,7 @@ jobs:
               java -cp mnt/vol/*:/app/* -Xmx2G "com.collibra.catalog.edge.ingestion.IngestionPoc"
               cp /root/edge_poc/ingestion/result.json ingestion/result.json
               cp /tmp/config.json cfg/
-              cat /edge_poc/ingestion/result.json
+              cat /root/edge_poc/ingestion/result.json
       - task: write-tasks
         config:
           platform: linux
