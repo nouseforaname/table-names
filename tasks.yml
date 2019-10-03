@@ -1,21 +1,3 @@
 steps:
-- get: dependencies-conn-provider
-- get: dependencies-driver
-- task: inject-jars-into-container
-  config:
-    platform: linux
-    inputs:
-    - name: dependencies-conn-provider
-    - name: dependencies-driver
-    outputs:
-    - name: mnt
-    image_resource:
-      type: registry-image
-      source: { repository: ellerbrock/alpine-bash-git }
-    run:
-      path: bash
-      args:
-        - -c
-        - |
-          mkdir -p mnt/vol
-          cp dependencies-*/* mnt/vol/
+- get: pipelines
+
