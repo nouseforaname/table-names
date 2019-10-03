@@ -37,7 +37,9 @@ jobs:
     plan:
       - get: table_names
       - get: dependencies-driver
+        trigger: true
       - get: dependencies-conn-provider
+        trigger: true
       - task: inject-jars-into-container
         config:
           platform: linux
@@ -155,7 +157,11 @@ jobs:
   - name: profile
     plan: 
       - get: dependencies-conn-provider
+        passed: [ingestion]
+        trigger: true
       - get: dependencies-driver
+        passed: [ingestion]
+        trigger: true]
       - task: inject-jars-into-container
         config:
           platform: linux
