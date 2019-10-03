@@ -1,3 +1,5 @@
 steps:
 - get: pipelines
+  passed: [ingestion]
+  trigger: true
 

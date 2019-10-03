@@ -161,7 +161,7 @@ jobs:
         trigger: true
       - get: dependencies-driver
         passed: [ingestion]
-        trigger: true]
+        trigger: true
       - task: inject-jars-into-container
         config:
           platform: linux
