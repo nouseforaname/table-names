@@ -18,4 +18,4 @@ steps:
         - -c
         - |
           mkdir -p mnt/vol
-          cp dependencies/* mnt/vol/
+          cp dependencies-*/* mnt/vol/
