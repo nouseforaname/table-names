@@ -1,10 +1,12 @@
 steps:
+- get: dependencies-conn-provider
+- get: dependencies-driver
 - task: inject-jars-into-container
   config:
     platform: linux
     inputs:
     - name: dependencies-conn-provider
-    - name: ependencies-driver
+    - name: dependencies-driver
     outputs:
     - name: mnt
     image_resource:
