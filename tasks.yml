@@ -1,7 +1,10 @@
 steps:
-- task: get_driver
+- task: inject-jars-into-container
   config:
     platform: linux
+    inputs:
+    - name: dependencies-conn-provider
+    - name: ependencies-driver
     outputs:
     - name: mnt
     image_resource:
@@ -13,4 +16,4 @@ steps:
         - -c
         - |
           mkdir -p mnt/vol
-          wget -O mnt/vol/driver.jar https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.2.0.jre8/mssql-jdbc-7.2.0.jre8.jar
+          cp dependencies/* mnt/vol/

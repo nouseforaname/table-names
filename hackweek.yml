@@ -1,4 +1,22 @@
 resources:
+  - name: dependencies-conn-provider
+    type: s3
+    source:
+      bucket: collibra-edge-poc
+      regexp: artifacts/mssql-jdbc-(.*).jre7.jar
+      region_name: eu-west-1
+      access_key_id: ((access_key))
+      secret_access_key: ((secret_key))
+      private: true
+  - name: dependencies-driver
+    type: s3
+    source:
+      bucket: collibra-edge-poc
+      regexp: artifacts/user-pass-connection-provider-(.*).jar
+      region_name: eu-west-1
+      access_key_id: ((access_key))
+      secret_access_key: ((secret_key))
+      private: true
   - name: table_names
     type: git
     source:
@@ -18,6 +36,26 @@ jobs:
   - name: ingestion
     plan:
       - get: table_names
+      - get: dependencies-driver
+      - get: dependencies-conn-provider
+      - task: inject-jars-into-container
+        config:
+          platform: linux
+          inputs:
+          - name: dependencies-conn-provider
+          - name: dependencies-driver
+          outputs:
+          - name: mnt
+          image_resource:
+            type: registry-image
+            source: { repository: ellerbrock/alpine-bash-git }
+          run:
+            path: bash
+            args:
+              - -c
+              - |
+                mkdir -p mnt/vol
+                cp dependencies-*/* mnt/vol/
       - task: ingest
         config:
           platform: linux
@@ -25,19 +63,35 @@ jobs:
             type: docker-image
             source:
               repository: docker-registry.collibra.com/catalog-edge/ingestion
-              tag: "0.0.1"
+              tag: "0.0.6"
               username: jenkins
               password: ((jenkins_pw))
               insecure_registries: [ "docker-registry.collibra.com" ]
           outputs:
             - name: ingestion
+            - name: cfg
+          inputs:
+            - name: mnt
+          params:
+            DRIVER_CLASS_NAME: ((driver_class_name))
+            CONN_STRING: ((conn_string))
+            CONFIG_JSON: ((config_json))
+            PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            LANG: en_US.UTF-8
+            LANGUAGE: en_US:en
+            LC_ALL: en_US.UTF-8
+            JAVA_HOME: /usr/lib/jvm/zulu-8
+            CONFIG_FILE_PATH: /tmp/config.json
           run:
-            path: bash
+            path: /bin/sh
             args:
             - -c
             - |
-              java -jar /opt/collibra/ingestion.jar
+              echo "$CONFIG_JSON" > "$CONFIG_FILE_PATH"
+              java -cp mnt/vol/*:/app/* -Xmx2G "com.collibra.catalog.edge.ingestion.IngestionPoc"
               cp /root/edge_poc/ingestion/result.json ingestion/result.json
+              cp /tmp/config.json cfg/
+              cat /edge_poc/ingestion/result.json
       - task: write-tasks
         config:
           platform: linux
@@ -50,6 +104,7 @@ jobs:
               - -c
               - |
                 #!/bin/bash
+                cat ingestion/result.json
                 cp table_names/tasks.yml tasks/tasks.yml
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
                 echo "
@@ -71,7 +126,7 @@ jobs:
                       type: docker-image
                       source:
                         repository: docker-registry.collibra.com/catalog-edge/profiling
-                        tag: \"0.0.5\"
+                        tag: \"0.0.6\"
                         username: jenkins
                         password: ((jenkins_pw))
                         insecure_registries: [ \"docker-registry.collibra.com\" ]
@@ -102,7 +157,7 @@ jobs:
       - get: pipelines
         passed: [ingestion]
       - in_parallel: 
-          limit: 1 #((concurrent_limit.limit))
+          limit: 2 #((concurrent_limit.limit))
           steps: ((steps))
 resource_types:
 - name: docker-image-resource
