@@ -142,7 +142,7 @@ jobs:
                       args:
                       - -c
                       - | 
-                        echo $(cat cfg/config.json) >> $CONFIG_FILE_PATH
+                        echo \'$(cat cfg/config.json)\' >> $CONFIG_FILE_PATH
                         /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.profiling.ProfilingPoc\"
                 " >> tasks/tasks.yml
                 done
