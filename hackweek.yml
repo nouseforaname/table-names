@@ -123,7 +123,6 @@ jobs:
                     platform: linux
                     params:
                       CONFIG_FILE_PATH: /tmp/config.json
-                      CONFIG_JSON: ((config_json))
                       TABLE_NAME: $f
                       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                       LANG: en_US.UTF-8
@@ -146,7 +145,7 @@ jobs:
                       args:
                       - -c
                       - |
-                        echo \"$CONFIG_JSON\" >> \$CONFIG_FILE_PATH
+                        echo '((config_json))' >> \$CONFIG_FILE_PATH
                         /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.profiling.ProfilingPoc\"
                 " >> tasks/tasks.yml
                 done
