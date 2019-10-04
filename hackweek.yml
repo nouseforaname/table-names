@@ -85,8 +85,8 @@ jobs:
             LANGUAGE: en_US:en
             LC_ALL: en_US.UTF-8
             JAVA_HOME: /usr/lib/jvm/zulu-8
-
           run:
+            user: root
             path: /bin/sh
             args:
             - -c
@@ -109,7 +109,6 @@ jobs:
               - -c
               - |
                 #!/bin/basha
-                CONFIG_JSON="$(cat cfg/config.json)"
                 cat ingestion/result.json
                 cp table_names/tasks.yml tasks/tasks.yml
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
@@ -141,7 +140,7 @@ jobs:
                       args:
                       - -c
                       - | 
-                        echo $CONFIG_JSON >> $CONFIG_FILE_PATH
+                        echo $(cat cfg/config.json) >> $CONFIG_FILE_PATH
                         /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.profiling.ProfilingPoc\"
                 " >> tasks/tasks.yml
                 done
