@@ -77,8 +77,6 @@ jobs:
           inputs:
             - name: mnt
           params:
-                  #DRIVER_CLASS_NAME: ((driver_class_name))
-                  #CONN_STRING: ((conn_string))
             CONFIG_JSON: ((config_json))
             CONFIG_FILE_PATH: /tmp/config.json
             PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -101,8 +99,7 @@ jobs:
         config:
           platform: linux
           params:
-            CONFIG_FILE_PATH: /tmp/config.json
-            CONFIG_JSON: ((config_json))
+            DRIVER_CLASS_NAME: ((config_json.jdbcAuth.driverClassName))
           image_resource:
             type: registry-image
             source: { repository: ellerbrock/alpine-bash-git }
@@ -122,8 +119,7 @@ jobs:
                   config:
                     platform: linux
                     params:
-                      CONFIG_FILE_PATH: /tmp/config.json
-                      CONFIG_JSON: '((config_json))'
+                      DRIVER_CLASS_NAME:  ((config_json.jdbcAuth.driverClassName))
                       TABLE_NAME: $f
                       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                       LANG: en_US.UTF-8
