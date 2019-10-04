@@ -36,6 +36,7 @@ jobs:
   - name: ingestion
     plan:
       - get: table_names
+        trigger: true
       - get: dependencies-driver
         trigger: true
       - get: dependencies-conn-provider
@@ -101,6 +102,7 @@ jobs:
           platform: linux
           params:
             CONFIG_FILE_PATH: /tmp/config.json
+            CONFIG_JSON: ((config_json))
           image_resource:
             type: registry-image
             source: { repository: ellerbrock/alpine-bash-git }
@@ -113,6 +115,7 @@ jobs:
                 #!/bin/basha
                 cat ingestion/result.json
                 cp table_names/tasks.yml tasks/tasks.yml
+                
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
                 echo "
                 - task: profile $f
@@ -120,6 +123,7 @@ jobs:
                     platform: linux
                     params:
                       CONFIG_FILE_PATH: /tmp/config.json
+                      CONFIG_JSON: ((config_json))
                       TABLE_NAME: $f
                       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                       LANG: en_US.UTF-8
@@ -141,8 +145,8 @@ jobs:
                       user: root
                       args:
                       - -c
-                      - | 
-                        echo \'$(cat cfg/config.json)\' >> $CONFIG_FILE_PATH
+                      - |
+                        echo \"$CONFIG_JSON\" >> \$CONFIG_FILE_PATH
                         /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.profiling.ProfilingPoc\"
                 " >> tasks/tasks.yml
                 done
@@ -150,7 +154,6 @@ jobs:
           outputs:
             - name: tasks
           inputs:
-            - name: cfg
             - name: table_names
             - name: ingestion
       - put: pipelines
