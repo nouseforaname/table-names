@@ -52,6 +52,7 @@ jobs:
             type: registry-image
             source: { repository: ellerbrock/alpine-bash-git }
           run:
+            user: root
             path: bash
             args:
               - -c
@@ -75,15 +76,16 @@ jobs:
           inputs:
             - name: mnt
           params:
-            DRIVER_CLASS_NAME: ((driver_class_name))
-            CONN_STRING: ((conn_string))
+                  #DRIVER_CLASS_NAME: ((driver_class_name))
+                  #CONN_STRING: ((conn_string))
             CONFIG_JSON: ((config_json))
+            CONFIG_FILE_PATH: /tmp/config.json
             PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             LANG: en_US.UTF-8
             LANGUAGE: en_US:en
             LC_ALL: en_US.UTF-8
             JAVA_HOME: /usr/lib/jvm/zulu-8
-            CONFIG_FILE_PATH: /tmp/config.json
+
           run:
             path: /bin/sh
             args:
@@ -101,11 +103,13 @@ jobs:
             type: registry-image
             source: { repository: ellerbrock/alpine-bash-git }
           run:
+            user: root
             path: bash
             args:
               - -c
               - |
-                #!/bin/bash
+                #!/bin/basha
+                CONFIG_JSON="$(cat cfg/config.json)"
                 cat ingestion/result.json
                 cp table_names/tasks.yml tasks/tasks.yml
                 IFS=','; for f in $(cat ingestion/result.json | sed 's#\[##' | sed 's#\]##'); do 
@@ -114,9 +118,8 @@ jobs:
                   config:
                     platform: linux
                     params:
-                      DRIVER_CLASS_NAME: ((driver_class_name))
+                      CONFIG_FILE_PATH: /tmp/config.json
                       TABLE_NAME: $f
-                      CONN_STRING: ((conn_string))
                       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                       LANG: en_US.UTF-8
                       LANGUAGE: en_US:en
@@ -134,9 +137,11 @@ jobs:
                         insecure_registries: [ \"docker-registry.collibra.com\" ]
                     run: 
                       path: /bin/sh
+                      user: root
                       args:
                       - -c
                       - | 
+                        echo $CONFIG_JSON >> $CONFIG_FILE_PATH
                         /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.profiling.ProfilingPoc\"
                 " >> tasks/tasks.yml
                 done
@@ -144,6 +149,7 @@ jobs:
           outputs:
             - name: tasks
           inputs:
+            - name: cfg
             - name: table_names
             - name: ingestion
       - put: pipelines
@@ -173,7 +179,9 @@ jobs:
           image_resource:
             type: registry-image
             source: { repository: ellerbrock/alpine-bash-git }
+
           run:
+            user: root
             path: bash
             args:
               - -c
