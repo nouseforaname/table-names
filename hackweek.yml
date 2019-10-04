@@ -99,6 +99,7 @@ jobs:
         config:
           platform: linux
           params:
+            CONFIG_JSON: ((config_json))
             DRIVER_CLASS_NAME: ((config_json.jdbcAuth.driverClassName))
           image_resource:
             type: registry-image
@@ -120,6 +121,8 @@ jobs:
                     platform: linux
                     params:
                       DRIVER_CLASS_NAME:  ((config_json.jdbcAuth.driverClassName))
+                      CONFIG_FILE_PATH: /tmp/config.json
+                      CONFIG_JSON: '$CONFIG_JSON'
                       TABLE_NAME: $f
                       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                       LANG: en_US.UTF-8
@@ -142,7 +145,7 @@ jobs:
                       args:
                       - -c
                       - |
-                        echo \$CONFIG_JSON >> \$CONFIG_FILE_PATH
+                        echo '\$CONFIG_JSON' >> \$CONFIG_FILE_PATH
                         /usr/lib/jvm/zulu-8/bin/java -cp mnt/vol/*:/app/* -Xmx2G \"com.collibra.catalog.edge.profiling.ProfilingPoc\"
                 " >> tasks/tasks.yml
                 done
