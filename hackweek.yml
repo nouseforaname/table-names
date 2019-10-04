@@ -99,6 +99,8 @@ jobs:
       - task: write-tasks
         config:
           platform: linux
+          params:
+            CONFIG_FILE_PATH: /tmp/config.json
           image_resource:
             type: registry-image
             source: { repository: ellerbrock/alpine-bash-git }
